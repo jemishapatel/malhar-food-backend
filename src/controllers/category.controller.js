@@ -1,0 +1,47 @@
+const categoryService = require('../services/category.service');
+const ApiResponse = require('../utils/apiResponse');
+
+exports.createCategory = async (req, res, next) => {
+  try {
+    if (req.file) {
+      req.body.image = `/uploads/${req.file.filename}`;
+    }
+    // In production, verify req.user.role === 'admin'
+    const category = await categoryService.createCategory(req.body);
+    return ApiResponse.success(res, 201, "Category created successfully", category);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.getAllCategories = async (req, res, next) => {
+  try {
+    const categories = await categoryService.fetchAllCategories();
+    return ApiResponse.success(res, 200, "Categories retrieved successfully", categories);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.updateCategory = async (req, res, next) => {
+  try {
+    if (req.file) {
+      req.body.image = `/uploads/${req.file.filename}`;
+    }
+    const { id } = req.params; // slug/id
+    const category = await categoryService.updateCategory(id, req.body);
+    return ApiResponse.success(res, 200, "Category updated successfully", category);
+  } catch (error) {
+    next(error);
+  }
+};
+
+exports.deleteCategory = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await categoryService.deleteCategory(id);
+    return ApiResponse.success(res, 200, "Category deleted successfully", result);
+  } catch (error) {
+    next(error);
+  }
+};
