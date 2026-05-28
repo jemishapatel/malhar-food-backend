@@ -1,5 +1,6 @@
 const swaggerUi = require('swagger-ui-express');
 
+const swaggerJsdoc = require('swagger-jsdoc');
 const swaggerDefinition = {
   openapi: '3.0.0',
   info: {
@@ -190,7 +191,11 @@ const swaggerDefinition = {
                 required: ['mobile'],
                 properties: {
                   mobile: { type: 'string', example: '+447700900123' },
-                  name: { type: 'string', example: 'Amit Patel' }
+                  name: { type: 'string', example: 'Amit Patel' },
+                  email: { type: 'string', example: 'john@example.com' },
+                  password: { type: 'string', example: 'secret' },
+                  role: { type: 'string', enum: ['customer', 'admin'], example: 'customer' },
+                  countryCode: { type: 'string', example: '+44' }
                 }
               }
             }
@@ -718,8 +723,265 @@ const swaggerDefinition = {
           }
         }
       }
+    },
+      // Banner CRUD
+    '/api/banners': {
+      get: {
+        tags: ['Admin Panel & CRUD'],
+        summary: 'Get all banners (Admin)',
+        security: [{ BearerAuth: [] }],
+        responses: {
+          200: {
+            description: 'List of all banners',
+            content: {
+              'application/json': {
+                schema: {
+                  allOf: [
+                    { $ref: '#/components/schemas/ApiResponseSuccess' },
+                    {
+                      properties: {
+                        data: {
+                          type: 'array',
+                          items: { $ref: '#/components/schemas/Banner' }
+                        }
+                      }
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      post: {
+        tags: ['Admin Panel & CRUD'],
+        summary: 'Create banner (Admin)',
+        security: [{ BearerAuth: [] }],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                required: ['title', 'image'],
+                properties: {
+                  title: { type: 'string' },
+                  image: { type: 'string', format: 'binary' },
+                  isActive: { type: 'boolean' }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          201: {
+            description: 'Banner created',
+            content: {
+              'application/json': {
+                schema: {
+                  allOf: [
+                    { $ref: '#/components/schemas/ApiResponseSuccess' },
+                    { properties: { data: { $ref: '#/components/schemas/Banner' } } }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    '/api/banners/{id}': {
+      put: {
+        tags: ['Admin Panel & CRUD'],
+        summary: 'Update banner (Admin)',
+        security: [{ BearerAuth: [] }],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                properties: {
+                  title: { type: 'string' },
+                  image: { type: 'string', format: 'binary' },
+                  isActive: { type: 'boolean' }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: {
+            description: 'Banner updated',
+            content: {
+              'application/json': {
+                schema: {
+                  allOf: [
+                    { $ref: '#/components/schemas/ApiResponseSuccess' },
+                    { properties: { data: { $ref: '#/components/schemas/Banner' } } }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      delete: {
+        tags: ['Admin Panel & CRUD'],
+        summary: 'Delete banner (Admin)',
+        security: [{ BearerAuth: [] }],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        responses: {
+          200: {
+            description: 'Banner deleted',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ApiResponseSuccess' }
+              }
+            }
+          }
+        }
+      }
+    },
+    // Product CRUD
+    '/api/products/{id}': {
+      put: {
+        tags: ['Admin Panel & CRUD'],
+        summary: 'Update product (Admin)',
+        security: [{ BearerAuth: [] }],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                required: ['name', 'categorySlug'],
+                properties: {
+                  name: { type: 'string' },
+                  description: { type: 'string' },
+                  categorySlug: { type: 'string' },
+                  subCategory: { type: 'string' },
+                  isOrganic: { type: 'boolean' },
+                  isVegan: { type: 'boolean' },
+                  isGlutenFree: { type: 'boolean' },
+                  origin: { type: 'string' },
+                  badge: { type: 'string', enum: ['none', 'New', 'Sale', 'Popular'] },
+                  inStock: { type: 'boolean' },
+                  variants: { type: 'string', description: 'JSON string array of variants' },
+                  images: {
+                    type: 'array',
+                    items: { type: 'string', format: 'binary' }
+                  }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: {
+            description: 'Product updated',
+            content: {
+              'application/json': {
+                schema: {
+                  allOf: [
+                    { $ref: '#/components/schemas/ApiResponseSuccess' },
+                    { properties: { data: { $ref: '#/components/schemas/Product' } } }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      delete: {
+        tags: ['Admin Panel & CRUD'],
+        summary: 'Delete product (Admin)',
+        security: [{ BearerAuth: [] }],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        responses: {
+          200: {
+            description: 'Product deleted',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ApiResponseSuccess' }
+              }
+            }
+          }
+        }
+      }
+    },
+    // Category CRUD
+    '/api/categories/{id}': {
+      put: {
+        tags: ['Admin Panel & CRUD'],
+        summary: 'Update category (Admin)',
+        security: [{ BearerAuth: [] }],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        requestBody: {
+          required: true,
+          content: {
+            'multipart/form-data': {
+              schema: {
+                type: 'object',
+                required: ['name', 'slug'],
+                properties: {
+                  name: { type: 'string' },
+                  slug: { type: 'string' },
+                  subCategories: { type: 'string', description: 'JSON string array' },
+                  image: { type: 'string', format: 'binary' }
+                }
+              }
+            }
+          }
+        },
+        responses: {
+          200: {
+            description: 'Category updated',
+            content: {
+              'application/json': {
+                schema: {
+                  allOf: [
+                    { $ref: '#/components/schemas/ApiResponseSuccess' },
+                    { properties: { data: { $ref: '#/components/schemas/Category' } } }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      delete: {
+        tags: ['Admin Panel & CRUD'],
+        summary: 'Delete category (Admin)',
+        security: [{ BearerAuth: [] }],
+        parameters: [
+          { name: 'id', in: 'path', required: true, schema: { type: 'string' } }
+        ],
+        responses: {
+          200: {
+            description: 'Category deleted',
+            content: {
+              'application/json': {
+                schema: { $ref: '#/components/schemas/ApiResponseSuccess' }
+              }
+            }
+          }
+        }
+      }
+    },
     }
-  }
 };
 
 const options = {

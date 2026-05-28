@@ -5,6 +5,7 @@ const wholesaleInquirySchema = new mongoose.Schema({
   fullName: { type: String, required: true },
   email: { type: String, required: true },
   mobile: { type: String, required: true },
+  countryCode: { type: String, default: '+44' }, // country code for mobile number
   businessName: { type: String, required: true },
   businessType: { type: String, required: true },
   vatNumber: { type: String }, // Optional

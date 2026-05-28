@@ -4,7 +4,9 @@ const authController = require('../controllers/auth.controller');
 const authMiddleware = require('../middlewares/auth.middleware');
 
 // Public auth endpoints
+router.post('/admin/login', authController.adminLogin);
 router.post('/otp/send', authController.sendOtp);
+
 router.post('/otp/verify', authController.verifyOtp);
 
 // Authenticated user endpoints

@@ -5,7 +5,7 @@ const authMiddleware = require('../middlewares/auth.middleware');
 const uploadMiddleware = require('../middlewares/upload.middleware');
 
 // Public category endpoints
-router.get('/', authMiddleware, categoryController.getAllCategories);
+router.get('/', categoryController.getAllCategories);
 
 // Admin category endpoints
 router.post('/', authMiddleware, uploadMiddleware.uploadSingle('image'), categoryController.createCategory);

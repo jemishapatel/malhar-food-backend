@@ -12,6 +12,7 @@ const orderSchema = new mongoose.Schema({
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
   customerName: { type: String, required: true },
   mobile: { type: String, required: true, index: true },
+  countryCode: { type: String, default: '+44' }, // country code for mobile number
   address: { type: String, required: true },
   city: { type: String, default: 'London' },
   postcode: { type: String, required: true },

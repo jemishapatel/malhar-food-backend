@@ -2,7 +2,7 @@ const User = require('../models/User');
 const Otp = require('../models/Otp');
 const otpUtil = require('../utils/otp.util');
 
-exports.sendOtp = async (mobile, name) => {
+exports.sendOtp = async (mobile, name, email, password, role, countryCode) => {
   // Generate a real 6-digit OTP
   const code = otpUtil.generateOtp();
 
@@ -20,16 +20,16 @@ exports.sendOtp = async (mobile, name) => {
   return { mobile, code };
 };
 
-exports.verifyOtp = async (mobile, name, code) => {
+exports.verifyOtp = async (mobile, name, code, email, password, role, countryCode) => {
   // Verify against Otp collection
   const otpRecord = await Otp.findOne({ mobile });
-  
+
   if (!otpRecord) {
     const error = new Error('OTP has expired or does not exist');
     error.statusCode = 400;
     throw error;
   }
-  
+
   if (otpRecord.code !== code.toString()) {
     const error = new Error('Invalid verification code');
     error.statusCode = 400;
@@ -39,20 +39,41 @@ exports.verifyOtp = async (mobile, name, code) => {
   // OTP verified successfully. Delete the OTP document.
   await Otp.deleteOne({ _id: otpRecord._id });
 
-  // Find or create user
+  // Find user by mobile
   let user = await User.findOne({ mobile });
   if (!user) {
+    // Create new user with optional fields
     user = new User({
       name: name || 'Guest User',
       mobile,
-      role: 'customer' // default role
+      role: role || 'customer',
+      email: email || undefined,
+      password: password || undefined,
+      countryCode: countryCode || undefined,
     });
     await user.save();
+  } else {
+    // Update existing user with any provided optional fields
+    const updates = {};
+    if (email) updates.email = email;
+    if (password) updates.password = password;
+    if (role) updates.role = role;
+    if (countryCode) updates.countryCode = countryCode;
+    if (Object.keys(updates).length > 0) {
+      await User.updateOne({ _id: user._id }, { $set: updates });
+      // Refresh user object
+      user = await User.findById(user._id);
+    }
   }
 
   return user;
 };
 
+// Find user by email — used for admin login
+exports.getUserByEmail = async (email) => {
+  const user = await User.findOne({ email });
+  return user;
+};
 exports.getUserProfile = async (userId) => {
   const user = await User.findById(userId);
   if (!user) {

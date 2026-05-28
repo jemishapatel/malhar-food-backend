@@ -4,12 +4,12 @@ const jwt = require('jsonwebtoken');
 
 exports.sendOtp = async (req, res, next) => {
   try {
-    const { mobile, name } = req.body;
+    const { mobile, name, email, password, role, countryCode } = req.body;
     if (!mobile) {
       return ApiResponse.error(res, 400, "Mobile number is required");
     }
 
-    const result = await authService.sendOtp(mobile, name);
+    const result = await authService.sendOtp(mobile, name, email, password, role, countryCode);
     return ApiResponse.success(res, 200, `Verification code sent to ${mobile}`, result);
   } catch (error) {
     next(error);
@@ -18,12 +18,12 @@ exports.sendOtp = async (req, res, next) => {
 
 exports.verifyOtp = async (req, res, next) => {
   try {
-    const { mobile, name, code } = req.body;
+    const { mobile, name, code, email, password, role, countryCode } = req.body;
     if (!mobile || !code) {
       return ApiResponse.error(res, 400, "Mobile number and verification code are required");
     }
 
-    const user = await authService.verifyOtp(mobile, name, code);
+    const user = await authService.verifyOtp(mobile, name, code, email, password, role, countryCode);
     
     const token = jwt.sign(
       { userId: user._id, mobile: user.mobile, role: user.role },
@@ -105,4 +105,29 @@ exports.logout = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
+
+// Admin login
+exports.adminLogin = async (req, res, next) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return ApiResponse.error(res, 400, 'Email and password are required');
+    }
+    const user = await authService.getUserByEmail(email);
+    if (!user) {
+      return ApiResponse.error(res, 401, 'Invalid credentials');
+    }
+    // Plain-text password check (for demo). Replace with bcrypt in production.
+    if (user.password !== password) {
+      return ApiResponse.error(res, 401, 'Invalid credentials');
+    }
+    if (user.role !== 'admin') {
+      return ApiResponse.error(res, 403, 'Admin access required');
+    }
+    const token = jwt.sign({ userId: user._id, mobile: user.mobile, role: user.role }, process.env.JWT_SECRET || 'mysecretkey123', { expiresIn: '30d' });
+    return ApiResponse.success(res, 200, 'Admin login successful', { token, user });
+  } catch (error) {
+    next(error);
+  }
+};;

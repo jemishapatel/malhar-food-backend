@@ -3,7 +3,7 @@ const Product = require('../models/Product');
 const User = require('../models/User');
 
 exports.createOrder = async (orderData) => {
-  const { customerName, mobile, address, city, postcode, items, userId } = orderData;
+  const { customerName, mobile, address, city, postcode, items, userId, countryCode } = orderData;
 
   if (!items || items.length === 0) {
     throw new Error('Order must contain at least one item');
@@ -53,6 +53,7 @@ exports.createOrder = async (orderData) => {
     userId,
     customerName,
     mobile,
+    countryCode: countryCode || '+44',
     address,
     city,
     postcode,
