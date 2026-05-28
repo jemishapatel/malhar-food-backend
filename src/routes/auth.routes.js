@@ -17,4 +17,7 @@ router.post('/addresses', authMiddleware, authController.createAddress);
 router.put('/addresses/:id', authMiddleware, authController.updateAddress);
 router.delete('/addresses/:id', authMiddleware, authController.deleteAddress);
 
+// Logout endpoint
+router.post('/logout', authMiddleware, authController.logout);
+
 module.exports = router;

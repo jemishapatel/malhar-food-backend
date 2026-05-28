@@ -398,6 +398,7 @@ const swaggerDefinition = {
       get: {
         tags: ['Catalog (Products & Categories)'],
         summary: 'Retrieve products catalog',
+        security: [{ BearerAuth: [] }],
         parameters: [
           { name: 'category', in: 'query', schema: { type: 'string' }, description: 'Category slug' },
           { name: 'subCategory', in: 'query', schema: { type: 'string' }, description: 'SubCategory string name' },
@@ -483,6 +484,7 @@ const swaggerDefinition = {
       get: {
         tags: ['Catalog (Products & Categories)'],
         summary: 'Retrieve categories catalog',
+        security: [{ BearerAuth: [] }],
         responses: {
           200: {
             description: 'List of all categories',
@@ -548,6 +550,7 @@ const swaggerDefinition = {
       post: {
         tags: ['Wholesale Partnership Portal'],
         summary: 'Submit B2B Inquiry',
+        security: [{ BearerAuth: [] }],
         description: 'Submits a wholesale inquiry form with business details.',
         requestBody: {
           required: true,

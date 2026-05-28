@@ -98,3 +98,11 @@ exports.deleteAddress = async (req, res, next) => {
     next(error);
   }
 };
+
+exports.logout = async (req, res, next) => {
+  try {
+    return ApiResponse.success(res, 200, "Logged out successfully");
+  } catch (error) {
+    next(error);
+  }
+};

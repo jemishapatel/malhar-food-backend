@@ -26,7 +26,11 @@ exports.getAllCategories = async (req, res, next) => {
 exports.updateCategory = async (req, res, next) => {
   try {
     if (req.file) {
+      // New image uploaded — use it
       req.body.image = `/uploads/${req.file.filename}`;
+    } else if (req.body.existingImage) {
+      // No new file — keep the existing image path sent by frontend
+      req.body.image = req.body.existingImage;
     }
     const { id } = req.params; // slug/id
     const category = await categoryService.updateCategory(id, req.body);

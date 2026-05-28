@@ -94,6 +94,24 @@ exports.updateProduct = async (id, updateData) => {
     }
   }
 
+  // Ensure variants is an array of objects. Accept JSON string as well.
+  if (updateData.variants !== undefined) {
+    if (typeof updateData.variants === 'string' && updateData.variants.trim()) {
+      try {
+        const parsed = JSON.parse(updateData.variants);
+        if (Array.isArray(parsed)) {
+          updateData.variants = parsed;
+        } else {
+          updateData.variants = [];
+        }
+      } catch (e) {
+        updateData.variants = [];
+      }
+    } else if (!Array.isArray(updateData.variants)) {
+      updateData.variants = [];
+    }
+  }
+
   const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
   if (!product) {
     throw new Error('Product not found');

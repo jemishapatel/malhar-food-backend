@@ -16,6 +16,7 @@ const productRoutes = require('./routes/product.routes');
 const categoryRoutes = require('./routes/category.routes');
 const orderRoutes = require('./routes/order.routes');
 const wholesaleRoutes = require('./routes/wholesale.routes');
+const bannerRoutes = require('./routes/banner.routes');
 const swagger = require('./config/swagger');
 
 // Swagger API Documentation route
@@ -30,6 +31,7 @@ app.use('/api/products', productRoutes);
 app.use('/api/categories', categoryRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/wholesale', wholesaleRoutes);
+app.use('/api/banners', bannerRoutes);
 
 // 404 Route handler
 app.use((req, res, next) => {
