@@ -1,9 +1,8 @@
-const ApiResponse = require('../utils/apiResponse');
-const User = require('../models/User');
-const jwt = require('jsonwebtoken');
+import ApiResponse from '../utils/apiResponse.js';
+import User from '../models/User.js';
+import jwt from 'jsonwebtoken';
 
-// JWT authentication middleware
-module.exports = async (req, res, next) => {
+const authMiddleware = async (req, res, next) => {
   try {
     const authHeader = req.headers.authorization;
 
@@ -25,3 +24,5 @@ module.exports = async (req, res, next) => {
     return ApiResponse.error(res, 401, 'Unauthorized request access denied', error.message);
   }
 };
+
+export default authMiddleware;

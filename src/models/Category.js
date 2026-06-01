@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const categorySchema = new mongoose.Schema({
   slug: { type: String, required: true, unique: true, index: true }, // e.g. "rice", "flour-grains"
@@ -7,4 +7,4 @@ const categorySchema = new mongoose.Schema({
   subCategories: [{ type: String }] // e.g. ["Basmati", "Jasmine"]
 }, { timestamps: true });
 
-module.exports = mongoose.model('Category', categorySchema);
+export default mongoose.model('Category', categorySchema);

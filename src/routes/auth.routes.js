@@ -1,7 +1,7 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const authController = require('../controllers/auth.controller');
-const authMiddleware = require('../middlewares/auth.middleware');
+import * as authController from '../controllers/auth.controller.js';
+import authMiddleware from '../middlewares/auth.middleware.js';
 
 // Public auth endpoints
 router.post('/admin/login', authController.adminLogin);
@@ -22,4 +22,4 @@ router.delete('/addresses/:id', authMiddleware, authController.deleteAddress);
 // Logout endpoint
 router.post('/logout', authMiddleware, authController.logout);
 
-module.exports = router;
+export default router;

@@ -1,8 +1,8 @@
-const Order = require('../models/Order');
-const Product = require('../models/Product');
-const User = require('../models/User');
+import Order from '../models/Order.js';
+import Product from '../models/Product.js';
+import User from '../models/User.js';
 
-exports.createOrder = async (orderData) => {
+export const createOrder = async (orderData) => {
   const { customerName, mobile, address, city, postcode, items, userId, countryCode } = orderData;
 
   if (!items || items.length === 0) {
@@ -64,11 +64,11 @@ exports.createOrder = async (orderData) => {
   return await order.save();
 };
 
-exports.fetchMyOrders = async (mobile) => {
+export const fetchMyOrders = async (mobile) => {
   return await Order.find({ mobile }).sort({ createdAt: -1 });
 };
 
-exports.fetchOrderById = async (id) => {
+export const fetchOrderById = async (id) => {
   // Can query by mongoose ObjectId or custom orderId string
   const query = id.startsWith('ORD-') ? { orderId: id } : { _id: id };
   const order = await Order.findOne(query).populate('items.productId');
@@ -78,11 +78,11 @@ exports.fetchOrderById = async (id) => {
   return order;
 };
 
-exports.fetchAllOrders = async () => {
+export const fetchAllOrders = async () => {
   return await Order.find().sort({ createdAt: -1 });
 };
 
-exports.updateOrderStatus = async (id, status) => {
+export const updateOrderStatus = async (id, status) => {
   const query = id.startsWith('ORD-') ? { orderId: id } : { _id: id };
   const order = await Order.findOneAndUpdate(query, { status }, { new: true });
   if (!order) {
@@ -91,7 +91,7 @@ exports.updateOrderStatus = async (id, status) => {
   return order;
 };
 
-exports.getAdminStats = async () => {
+export const getAdminStats = async () => {
   // Aggregate revenue and counts
   const totalRevenueResult = await Order.aggregate([
     { $match: { status: { $ne: 'Cancelled' } } },
@@ -117,7 +117,7 @@ exports.getAdminStats = async () => {
   };
 };
 
-exports.fetchCustomersList = async () => {
+export const fetchCustomersList = async () => {
   // Aggregate spending and orders per mobile/customer
   return await Order.aggregate([
     {
@@ -134,7 +134,7 @@ exports.fetchCustomersList = async () => {
   ]);
 };
 
-exports.fetchCustomerDetailByMobile = async (mobile) => {
+export const fetchCustomerDetailByMobile = async (mobile) => {
   // Fetch aggregate customer spending and order history
   const orders = await Order.find({ mobile }).sort({ createdAt: -1 });
   if (orders.length === 0) {

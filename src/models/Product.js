@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const variantSchema = new mongoose.Schema({
   size: { type: String, required: true }, // e.g. "1kg", "5kg"
@@ -25,4 +25,4 @@ const productSchema = new mongoose.Schema({
   variants: [variantSchema]
 }, { timestamps: true });
 
-module.exports = mongoose.model('Product', productSchema);
+export default mongoose.model('Product', productSchema);

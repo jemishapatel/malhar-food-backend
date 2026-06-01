@@ -1,7 +1,7 @@
-const wholesaleService = require('../services/wholesale.service');
-const ApiResponse = require('../utils/apiResponse');
+import * as wholesaleService from '../services/wholesale.service.js';
+import ApiResponse from '../utils/apiResponse.js';
 
-exports.submitInquiry = async (req, res, next) => {
+export const submitInquiry = async (req, res, next) => {
   try {
     const inquiry = await wholesaleService.createInquiry(req.body);
     return ApiResponse.success(res, 201, "Wholesale inquiry submitted successfully", inquiry);
@@ -10,7 +10,7 @@ exports.submitInquiry = async (req, res, next) => {
   }
 };
 
-exports.getAllInquiries = async (req, res, next) => {
+export const getAllInquiries = async (req, res, next) => {
   try {
     const inquiries = await wholesaleService.fetchAllInquiries();
     return ApiResponse.success(res, 200, "Wholesale inquiries retrieved successfully", inquiries);
@@ -19,7 +19,7 @@ exports.getAllInquiries = async (req, res, next) => {
   }
 };
 
-exports.updateInquiryStatus = async (req, res, next) => {
+export const updateInquiryStatus = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { status } = req.body;

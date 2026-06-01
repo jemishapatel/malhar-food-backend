@@ -1,4 +1,4 @@
-const Category = require('../models/Category');
+import Category from '../models/Category.js';
 
 // Shared helper — parses subCategories from any format the frontend may send
 const parseSubCategories = (subCategories) => {
@@ -15,7 +15,7 @@ const parseSubCategories = (subCategories) => {
   return [];
 };
 
-exports.createCategory = async (categoryData) => {
+export const createCategory = async (categoryData) => {
   const { name, image, subCategories } = categoryData;
   const slug = categoryData.slug || name.toLowerCase().replace(/\s+/g, '-');
 
@@ -30,15 +30,16 @@ exports.createCategory = async (categoryData) => {
     image,
     subCategories: parseSubCategories(subCategories),
   });
+  console.log(category,'----------------------------')
 
   return await category.save();
 };
 
-exports.fetchAllCategories = async () => {
+export const fetchAllCategories = async () => {
   return await Category.find().sort({ name: 1 });
 };
 
-exports.updateCategory = async (slug, updateData) => {
+export const updateCategory = async (slug, updateData) => {
   // Parse subCategories using the same helper
   if (updateData.subCategories !== undefined) {
     updateData.subCategories = parseSubCategories(updateData.subCategories);
@@ -54,7 +55,7 @@ exports.updateCategory = async (slug, updateData) => {
   return category;
 };
 
-exports.deleteCategory = async (slug) => {
+export const deleteCategory = async (slug) => {
   const category = await Category.findOneAndDelete({ slug });
   if (!category) {
     throw new Error('Category not found');

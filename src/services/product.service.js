@@ -1,7 +1,7 @@
-const Product = require('../models/Product');
-const Category = require('../models/Category');
+import Product from '../models/Product.js';
+import Category from '../models/Category.js';
 
-exports.createProduct = async (productData) => {
+export const createProduct = async (productData) => {
   // Validate category if provided
   if (productData.categorySlug) {
     const category = await Category.findOne({ slug: productData.categorySlug });
@@ -37,7 +37,7 @@ exports.createProduct = async (productData) => {
   return await product.save();
 };
 
-exports.fetchProducts = async (filters) => {
+export const fetchProducts = async (filters) => {
   const query = {};
 
   if (filters.category) {
@@ -68,7 +68,7 @@ exports.fetchProducts = async (filters) => {
   return await Product.find(query).sort({ createdAt: -1 });
 };
 
-exports.fetchProductById = async (id) => {
+export const fetchProductById = async (id) => {
   const product = await Product.findById(id);
   if (!product) {
     throw new Error('Product not found');
@@ -76,7 +76,7 @@ exports.fetchProductById = async (id) => {
   return product;
 };
 
-exports.updateProduct = async (id, updateData) => {
+export const updateProduct = async (id, updateData) => {
   if (updateData.categorySlug || updateData.subCategory) {
     const categorySlug = updateData.categorySlug || (await Product.findById(id)).categorySlug;
     const category = await Category.findOne({ slug: categorySlug });
@@ -119,7 +119,7 @@ exports.updateProduct = async (id, updateData) => {
   return product;
 };
 
-exports.deleteProduct = async (id) => {
+export const deleteProduct = async (id) => {
   const product = await Product.findByIdAndDelete(id);
   if (!product) {
     throw new Error('Product not found');

@@ -1,7 +1,7 @@
-const orderService = require('../services/order.service');
-const ApiResponse = require('../utils/apiResponse');
+import * as orderService from '../services/order.service.js';
+import ApiResponse from '../utils/apiResponse.js';
 
-exports.placeOrder = async (req, res, next) => {
+export const placeOrder = async (req, res, next) => {
   try {
     const orderData = {
       ...req.body,
@@ -14,7 +14,7 @@ exports.placeOrder = async (req, res, next) => {
   }
 };
 
-exports.getMyOrders = async (req, res, next) => {
+export const getMyOrders = async (req, res, next) => {
   try {
     const mobile = req.user ? req.user.mobile : req.query.mobile;
     if (!mobile) {
@@ -27,7 +27,7 @@ exports.getMyOrders = async (req, res, next) => {
   }
 };
 
-exports.getOrderById = async (req, res, next) => {
+export const getOrderById = async (req, res, next) => {
   try {
     const { id } = req.params;
     const order = await orderService.fetchOrderById(id);
@@ -37,7 +37,7 @@ exports.getOrderById = async (req, res, next) => {
   }
 };
 
-exports.getAllOrders = async (req, res, next) => {
+export const getAllOrders = async (req, res, next) => {
   try {
     // In production, check req.user.role === 'admin'
     const orders = await orderService.fetchAllOrders();
@@ -47,7 +47,7 @@ exports.getAllOrders = async (req, res, next) => {
   }
 };
 
-exports.updateOrderStatus = async (req, res, next) => {
+export const updateOrderStatus = async (req, res, next) => {
   try {
     const { id } = req.params;
     const { status } = req.body;
@@ -61,7 +61,7 @@ exports.updateOrderStatus = async (req, res, next) => {
   }
 };
 
-exports.getAdminStats = async (req, res, next) => {
+export const getAdminStats = async (req, res, next) => {
   try {
     const stats = await orderService.getAdminStats();
     return ApiResponse.success(res, 200, "Admin stats metrics compiled successfully", stats);
@@ -70,7 +70,7 @@ exports.getAdminStats = async (req, res, next) => {
   }
 };
 
-exports.getCustomersList = async (req, res, next) => {
+export const getCustomersList = async (req, res, next) => {
   try {
     const customers = await orderService.fetchCustomersList();
     return ApiResponse.success(res, 200, "Customer list compiled successfully", customers);
@@ -79,7 +79,7 @@ exports.getCustomersList = async (req, res, next) => {
   }
 };
 
-exports.getCustomerDetailByMobile = async (req, res, next) => {
+export const getCustomerDetailByMobile = async (req, res, next) => {
   try {
     const { mobile } = req.params;
     const detail = await orderService.fetchCustomerDetailByMobile(mobile);

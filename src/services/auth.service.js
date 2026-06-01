@@ -1,8 +1,9 @@
-const User = require('../models/User');
-const Otp = require('../models/Otp');
-const otpUtil = require('../utils/otp.util');
+import User from '../models/User.js';
+import Otp from '../models/Otp.js';
+import * as otpUtil from '../utils/otp.util.js';
+import bcrypt from 'bcrypt';
 
-exports.sendOtp = async (mobile, name, email, password, role, countryCode) => {
+export const sendOtp = async (mobile, name, email, password, role, countryCode) => {
   // Generate a real 6-digit OTP
   const code = otpUtil.generateOtp();
 
@@ -20,61 +21,140 @@ exports.sendOtp = async (mobile, name, email, password, role, countryCode) => {
   return { mobile, code };
 };
 
-exports.verifyOtp = async (mobile, name, code, email, password, role, countryCode) => {
-  // Verify against Otp collection
+// export const verifyOtp = async (mobile, name, code, email, password, role, countryCode) => {
+//   // Verify against Otp collection
+//   const otpRecord = await Otp.findOne({ mobile });
+
+//   if (!otpRecord) {
+//     const error = new Error('OTP has expired or does not exist');
+//     error.statusCode = 400;
+//     throw error;
+//   }
+
+//   if (otpRecord.code !== code.toString()) {
+//     const error = new Error('Invalid verification code');
+//     error.statusCode = 400;
+//     throw error;
+//   }
+
+//   // OTP verified successfully. Delete the OTP document.
+//   await Otp.deleteOne({ _id: otpRecord._id });
+
+//   // Find user by mobile
+//   let user = await User.findOne({ mobile });
+//   if (!user) {
+//     // Create new user with optional fields
+//     user = new User({
+//       name: name || 'Guest User',
+//       mobile,
+//       role: role || 'customer',
+//       email: email || undefined,
+//       password: password || undefined,
+//       countryCode: countryCode || undefined,
+//     });
+//     await user.save();
+//   } else {
+//     // Update existing user with any provided optional fields
+//     const updates = {};
+//     if (email) updates.email = email;
+//     if (password) updates.password = password;
+//     if (role) updates.role = role;
+//     if (countryCode) updates.countryCode = countryCode;
+//     if (Object.keys(updates).length > 0) {
+//       await User.updateOne({ _id: user._id }, { $set: updates });
+//       // Refresh user object
+//       user = await User.findById(user._id);
+//     }
+//   }
+
+//   return user;
+// };
+
+// Find user by email — used for admin login
+
+export const verifyOtp = async (
+  mobile,
+  name,
+  code,
+  email,
+  password,
+  role,
+  countryCode
+) => {
+
   const otpRecord = await Otp.findOne({ mobile });
 
   if (!otpRecord) {
-    const error = new Error('OTP has expired or does not exist');
-    error.statusCode = 400;
-    throw error;
+    throw new Error('OTP expired');
   }
 
   if (otpRecord.code !== code.toString()) {
-    const error = new Error('Invalid verification code');
-    error.statusCode = 400;
-    throw error;
+    throw new Error('Invalid OTP');
   }
 
-  // OTP verified successfully. Delete the OTP document.
   await Otp.deleteOne({ _id: otpRecord._id });
 
-  // Find user by mobile
   let user = await User.findOne({ mobile });
+
+  // CREATE USER
   if (!user) {
-    // Create new user with optional fields
-    user = new User({
+
+    const userData = {
       name: name || 'Guest User',
       mobile,
-      role: role || 'customer',
-      email: email || undefined,
-      password: password || undefined,
-      countryCode: countryCode || undefined,
-    });
-    await user.save();
-  } else {
-    // Update existing user with any provided optional fields
-    const updates = {};
-    if (email) updates.email = email;
-    if (password) updates.password = password;
-    if (role) updates.role = role;
-    if (countryCode) updates.countryCode = countryCode;
-    if (Object.keys(updates).length > 0) {
-      await User.updateOne({ _id: user._id }, { $set: updates });
-      // Refresh user object
-      user = await User.findById(user._id);
+      role: role || 'admin',
+      countryCode: countryCode || '+91',
+    };
+
+    if (email && email.trim() !== '') {
+      userData.email = email;
     }
+
+    if (password && password.trim() !== '') {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      userData.password = hashedPassword;
+    }
+
+    user = new User(userData);
+
+    await user.save();
+  }
+
+  // UPDATE USER
+  else {
+
+    if (name) {
+      user.name = name;
+    }
+
+    if (email && email.trim() !== '') {
+      user.email = email;
+    }
+
+    if (password && password.trim() !== '') {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      user.password = hashedPassword;
+    }
+
+    if (role) {
+      user.role = role;
+    }
+
+    if (countryCode) {
+      user.countryCode = countryCode;
+    }
+
+    await user.save();
   }
 
   return user;
 };
 
-// Find user by email — used for admin login
-exports.getUserByEmail = async (email) => {
+export const getUserByEmail = async (email) => {
   const user = await User.findOne({ email });
   return user;
 };
-exports.getUserProfile = async (userId) => {
+export const getUserProfile = async (userId) => {
   const user = await User.findById(userId);
   if (!user) {
     throw new Error('User not found');
@@ -82,7 +162,7 @@ exports.getUserProfile = async (userId) => {
   return user;
 };
 
-exports.updateUserProfile = async (userId, updateData) => {
+export const updateUserProfile = async (userId, updateData) => {
   const user = await User.findByIdAndUpdate(userId, updateData, { new: true });
   if (!user) {
     throw new Error('User not found');
@@ -90,7 +170,7 @@ exports.updateUserProfile = async (userId, updateData) => {
   return user;
 };
 
-exports.getUserAddresses = async (userId) => {
+export const getUserAddresses = async (userId) => {
   const user = await User.findById(userId);
   if (!user) {
     throw new Error('User not found');
@@ -98,7 +178,7 @@ exports.getUserAddresses = async (userId) => {
   return user.addresses;
 };
 
-exports.createUserAddress = async (userId, addressData) => {
+export const createUserAddress = async (userId, addressData) => {
   const user = await User.findById(userId);
   if (!user) {
     throw new Error('User not found');
@@ -116,7 +196,7 @@ exports.createUserAddress = async (userId, addressData) => {
   return user.addresses[user.addresses.length - 1];
 };
 
-exports.updateUserAddress = async (userId, addressId, addressData) => {
+export const updateUserAddress = async (userId, addressId, addressData) => {
   const user = await User.findById(userId);
   if (!user) {
     throw new Error('User not found');
@@ -140,7 +220,7 @@ exports.updateUserAddress = async (userId, addressId, addressData) => {
   return address;
 };
 
-exports.deleteUserAddress = async (userId, addressId) => {
+export const deleteUserAddress = async (userId, addressId) => {
   const user = await User.findById(userId);
   if (!user) {
     throw new Error('User not found');

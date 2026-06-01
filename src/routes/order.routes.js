@@ -1,7 +1,7 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const orderController = require('../controllers/order.controller');
-const authMiddleware = require('../middlewares/auth.middleware');
+import * as orderController from '../controllers/order.controller.js';
+import authMiddleware from '../middlewares/auth.middleware.js';
 
 // Public/Guest Order placement
 router.post('/', authMiddleware, orderController.placeOrder);
@@ -19,4 +19,4 @@ router.get('/admin', authMiddleware, orderController.getAllOrders);
 router.get('/:id', authMiddleware, orderController.getOrderById);
 router.put('/:id/status', authMiddleware, orderController.updateOrderStatus);
 
-module.exports = router;
+export default router;

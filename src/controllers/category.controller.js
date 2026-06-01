@@ -1,7 +1,7 @@
-const categoryService = require('../services/category.service');
-const ApiResponse = require('../utils/apiResponse');
+import * as categoryService from '../services/category.service.js';
+import ApiResponse from '../utils/apiResponse.js';
 
-exports.createCategory = async (req, res, next) => {
+export const createCategory = async (req, res, next) => {
   try {
     if (req.file) {
       req.body.image = `/uploads/${req.file.filename}`;
@@ -14,7 +14,7 @@ exports.createCategory = async (req, res, next) => {
   }
 };
 
-exports.getAllCategories = async (req, res, next) => {
+export const getAllCategories = async (req, res, next) => {
   try {
     const categories = await categoryService.fetchAllCategories();
     return ApiResponse.success(res, 200, "Categories retrieved successfully", categories);
@@ -23,7 +23,7 @@ exports.getAllCategories = async (req, res, next) => {
   }
 };
 
-exports.updateCategory = async (req, res, next) => {
+export const updateCategory = async (req, res, next) => {
   try {
     if (req.file) {
       // New image uploaded — use it
@@ -40,7 +40,7 @@ exports.updateCategory = async (req, res, next) => {
   }
 };
 
-exports.deleteCategory = async (req, res, next) => {
+export const deleteCategory = async (req, res, next) => {
   try {
     const { id } = req.params;
     const result = await categoryService.deleteCategory(id);

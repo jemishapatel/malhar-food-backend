@@ -1,8 +1,8 @@
-const bannerService = require('../services/banner.service');
-const ApiResponse = require('../utils/apiResponse');
+import * as bannerService from '../services/banner.service.js';
+import ApiResponse from '../utils/apiResponse.js';
 
 // Public — homepage slider
-exports.getActiveBanners = async (req, res, next) => {
+export const getActiveBanners = async (req, res, next) => {
   try {
     const banners = await bannerService.fetchActiveBanners();
     return ApiResponse.success(res, 200, "Active banners retrieved successfully", banners);
@@ -12,7 +12,7 @@ exports.getActiveBanners = async (req, res, next) => {
 };
 
 // Admin — all banners
-exports.getAllBanners = async (req, res, next) => {
+export const getAllBanners = async (req, res, next) => {
   try {
     const banners = await bannerService.fetchAllBanners();
     return ApiResponse.success(res, 200, "All banners retrieved successfully", banners);
@@ -22,7 +22,7 @@ exports.getAllBanners = async (req, res, next) => {
 };
 
 // Admin — create
-exports.createBanner = async (req, res, next) => {
+export const createBanner = async (req, res, next) => {
   try {
     if (req.file) {
       req.body.image = `/uploads/${req.file.filename}`;
@@ -35,7 +35,7 @@ exports.createBanner = async (req, res, next) => {
 };
 
 // Admin — update
-exports.updateBanner = async (req, res, next) => {
+export const updateBanner = async (req, res, next) => {
   try {
     if (req.file) {
       req.body.image = `/uploads/${req.file.filename}`;
@@ -52,7 +52,7 @@ exports.updateBanner = async (req, res, next) => {
 };
 
 // Admin — delete
-exports.deleteBanner = async (req, res, next) => {
+export const deleteBanner = async (req, res, next) => {
   try {
     const { id } = req.params;
     const result = await bannerService.deleteBanner(id);

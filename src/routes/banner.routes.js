@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const bannerController = require('../controllers/banner.controller');
-const authMiddleware = require('../middlewares/auth.middleware');
-const uploadMiddleware = require('../middlewares/upload.middleware');
+import * as bannerController from '../controllers/banner.controller.js';
+import authMiddleware from '../middlewares/auth.middleware.js';
+import * as uploadMiddleware from '../middlewares/upload.middleware.js';
 
 // Public — homepage fetches active banners
 router.get('/', bannerController.getActiveBanners);
@@ -13,4 +13,4 @@ router.post('/', authMiddleware, uploadMiddleware.uploadSingle('image'), bannerC
 router.put('/:id', authMiddleware, uploadMiddleware.uploadSingle('image'), bannerController.updateBanner);
 router.delete('/:id', authMiddleware, bannerController.deleteBanner);
 
-module.exports = router;
+export default router;

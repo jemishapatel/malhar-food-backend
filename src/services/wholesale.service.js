@@ -1,6 +1,6 @@
-const WholesaleInquiry = require('../models/WholesaleInquiry');
+import WholesaleInquiry from '../models/WholesaleInquiry.js';
 
-exports.createInquiry = async (inquiryData) => {
+export const createInquiry = async (inquiryData) => {
   const count = await WholesaleInquiry.countDocuments();
   const year = new Date().getFullYear();
   const index = String(count + 1).padStart(4, '0');
@@ -14,11 +14,11 @@ exports.createInquiry = async (inquiryData) => {
   return await inquiry.save();
 };
 
-exports.fetchAllInquiries = async () => {
+export const fetchAllInquiries = async () => {
   return await WholesaleInquiry.find().sort({ createdAt: -1 });
 };
 
-exports.updateInquiryStatus = async (id, status) => {
+export const updateInquiryStatus = async (id, status) => {
   const query = id.startsWith('WHS-') ? { inquiryId: id } : { _id: id };
   const inquiry = await WholesaleInquiry.findOneAndUpdate(query, { status }, { new: true });
   if (!inquiry) {

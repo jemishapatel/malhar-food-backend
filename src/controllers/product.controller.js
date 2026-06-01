@@ -1,7 +1,7 @@
-const productService = require('../services/product.service');
-const ApiResponse = require('../utils/apiResponse');
+import * as productService from '../services/product.service.js';
+import ApiResponse from '../utils/apiResponse.js';
 
-exports.createProduct = async (req, res, next) => {
+export const createProduct = async (req, res, next) => {
   try {
     if (req.files && req.files.length > 0) {
       req.body.images = req.files.map(file => `/uploads/${file.filename}`);
@@ -13,7 +13,7 @@ exports.createProduct = async (req, res, next) => {
   }
 };
 
-exports.getProducts = async (req, res, next) => {
+export const getProducts = async (req, res, next) => {
   try {
     const products = await productService.fetchProducts(req.query);
     return ApiResponse.success(res, 200, "Products retrieved successfully", products);
@@ -22,7 +22,7 @@ exports.getProducts = async (req, res, next) => {
   }
 };
 
-exports.getProductById = async (req, res, next) => {
+export const getProductById = async (req, res, next) => {
   try {
     const { id } = req.params;
     const product = await productService.fetchProductById(id);
@@ -32,7 +32,7 @@ exports.getProductById = async (req, res, next) => {
   }
 };
 
-exports.updateProduct = async (req, res, next) => {
+export const updateProduct = async (req, res, next) => {
   try {
     if (req.files && req.files.length > 0) {
       req.body.images = req.files.map(file => `/uploads/${file.filename}`);
@@ -45,7 +45,7 @@ exports.updateProduct = async (req, res, next) => {
   }
 };
 
-exports.deleteProduct = async (req, res, next) => {
+export const deleteProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
     const result = await productService.deleteProduct(id);

@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const productController = require('../controllers/product.controller');
-const authMiddleware = require('../middlewares/auth.middleware');
-const uploadMiddleware = require('../middlewares/upload.middleware');
+import * as productController from '../controllers/product.controller.js';
+import authMiddleware from '../middlewares/auth.middleware.js';
+import * as uploadMiddleware from '../middlewares/upload.middleware.js';
 
 // Public catalog endpoints (no auth required - anyone can browse products)
 router.get('/', productController.getProducts);
@@ -13,4 +13,4 @@ router.post('/', authMiddleware, uploadMiddleware.uploadMultiple('images'), prod
 router.put('/:id', authMiddleware, uploadMiddleware.uploadMultiple('images'), productController.updateProduct);
 router.delete('/:id', authMiddleware, productController.deleteProduct);
 
-module.exports = router;
+export default router;

@@ -1,6 +1,6 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const ApiResponse = require('../utils/apiResponse');
+import ApiResponse from '../utils/apiResponse.js';
 
 router.get('/status', (req, res) => {
   return ApiResponse.success(res, 200, "Backend API service is online", {
@@ -9,4 +9,4 @@ router.get('/status', (req, res) => {
   });
 });
 
-module.exports = router;
+export default router;

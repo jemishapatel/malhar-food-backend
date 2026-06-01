@@ -1,11 +1,4 @@
 class ApiResponse {
-  /**
-   * @param {boolean} success - Flag indicating operation state
-   * @param {number} statusCode - HTTP status code
-   * @param {string} message - Descriptive response message
-   * @param {any} [data=null] - Payload content (for successful responses)
-   * @param {any} [errors=null] - Error breakdown detail array/object (for failures)
-   */
   constructor(success, statusCode, message, data = null, errors = null) {
     this.success = success;
     this.statusCode = statusCode;
@@ -27,4 +20,4 @@ class ApiResponse {
   }
 }
 
-module.exports = ApiResponse;
+export default ApiResponse;

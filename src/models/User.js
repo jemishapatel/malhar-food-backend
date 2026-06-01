@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 // Address subdocument schema
 const addressSchema = new mongoose.Schema({
@@ -21,4 +21,4 @@ const userSchema = new mongoose.Schema({
   addresses: [addressSchema]
 }, { timestamps: true });
 
-module.exports = mongoose.model('User', userSchema);
+export default mongoose.model('User', userSchema);

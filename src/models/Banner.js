@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 const bannerSchema = new mongoose.Schema({
   title: { type: String, required: true },          // e.g. "Dal & Pulses, Rich Protein"
@@ -11,4 +11,4 @@ const bannerSchema = new mongoose.Schema({
   isActive: { type: Boolean, default: true },
 }, { timestamps: true });
 
-module.exports = mongoose.model('Banner', bannerSchema);
+export default mongoose.model('Banner', bannerSchema);

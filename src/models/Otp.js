@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const otpSchema = new mongoose.Schema({
   mobile: { type: String, required: true },
@@ -6,4 +6,4 @@ const otpSchema = new mongoose.Schema({
   createdAt: { type: Date, default: Date.now, expires: 300 } // Auto-delete document after 5 minutes (300 seconds)
 });
 
-module.exports = mongoose.model('Otp', otpSchema);
+export default mongoose.model('Otp', otpSchema);

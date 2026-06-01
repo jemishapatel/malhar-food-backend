@@ -1,8 +1,9 @@
-const authService = require('../services/auth.service');
-const ApiResponse = require('../utils/apiResponse');
-const jwt = require('jsonwebtoken');
+import * as authService from '../services/auth.service.js';
+import ApiResponse from '../utils/apiResponse.js';
+import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 
-exports.sendOtp = async (req, res, next) => {
+export const sendOtp = async (req, res, next) => {
   try {
     const { mobile, name, email, password, role, countryCode } = req.body;
     if (!mobile) {
@@ -16,7 +17,7 @@ exports.sendOtp = async (req, res, next) => {
   }
 };
 
-exports.verifyOtp = async (req, res, next) => {
+export const verifyOtp = async (req, res, next) => {
   try {
     const { mobile, name, code, email, password, role, countryCode } = req.body;
     if (!mobile || !code) {
@@ -37,7 +38,7 @@ exports.verifyOtp = async (req, res, next) => {
   }
 };
 
-exports.getProfile = async (req, res, next) => {
+export const getProfile = async (req, res, next) => {
   try {
     const userId = req.user._id;
     const user = await authService.getUserProfile(userId);
@@ -47,7 +48,7 @@ exports.getProfile = async (req, res, next) => {
   }
 };
 
-exports.updateProfile = async (req, res, next) => {
+export const updateProfile = async (req, res, next) => {
   try {
     const userId = req.user._id;
     const user = await authService.updateUserProfile(userId, req.body);
@@ -57,7 +58,7 @@ exports.updateProfile = async (req, res, next) => {
   }
 };
 
-exports.getAddresses = async (req, res, next) => {
+export const getAddresses = async (req, res, next) => {
   try {
     const userId = req.user._id;
     const addresses = await authService.getUserAddresses(userId);
@@ -67,7 +68,7 @@ exports.getAddresses = async (req, res, next) => {
   }
 };
 
-exports.createAddress = async (req, res, next) => {
+export const createAddress = async (req, res, next) => {
   try {
     const userId = req.user._id;
     const address = await authService.createUserAddress(userId, req.body);
@@ -77,7 +78,7 @@ exports.createAddress = async (req, res, next) => {
   }
 };
 
-exports.updateAddress = async (req, res, next) => {
+export const updateAddress = async (req, res, next) => {
   try {
     const userId = req.user._id;
     const addressId = req.params.id;
@@ -88,7 +89,7 @@ exports.updateAddress = async (req, res, next) => {
   }
 };
 
-exports.deleteAddress = async (req, res, next) => {
+export const deleteAddress = async (req, res, next) => {
   try {
     const userId = req.user._id;
     const addressId = req.params.id;
@@ -99,7 +100,7 @@ exports.deleteAddress = async (req, res, next) => {
   }
 };
 
-exports.logout = async (req, res, next) => {
+export const logout = async (req, res, next) => {
   try {
     return ApiResponse.success(res, 200, "Logged out successfully");
   } catch (error) {
@@ -108,26 +109,53 @@ exports.logout = async (req, res, next) => {
 }
 
 // Admin login
-exports.adminLogin = async (req, res, next) => {
+export const adminLogin = async (req, res, next) => {
   try {
+
     const { email, password } = req.body;
+
     if (!email || !password) {
       return ApiResponse.error(res, 400, 'Email and password are required');
     }
+
     const user = await authService.getUserByEmail(email);
+
     if (!user) {
       return ApiResponse.error(res, 401, 'Invalid credentials');
     }
-    // Plain-text password check (for demo). Replace with bcrypt in production.
-    if (user.password !== password) {
+
+    // Compare bcrypt password
+    const isPasswordValid = await bcrypt.compare(
+      password,
+      user.password
+    );
+
+    if (!isPasswordValid) {
       return ApiResponse.error(res, 401, 'Invalid credentials');
     }
+
     if (user.role !== 'admin') {
       return ApiResponse.error(res, 403, 'Admin access required');
     }
-    const token = jwt.sign({ userId: user._id, mobile: user.mobile, role: user.role }, process.env.JWT_SECRET || 'mysecretkey123', { expiresIn: '30d' });
-    return ApiResponse.success(res, 200, 'Admin login successful', { token, user });
+
+    const token = jwt.sign(
+      {
+        userId: user._id,
+        mobile: user.mobile,
+        role: user.role
+      },
+      process.env.JWT_SECRET || 'mysecretkey123',
+      { expiresIn: '30d' }
+    );
+
+    return ApiResponse.success(
+      res,
+      200,
+      'Admin login successful',
+      { token, user }
+    );
+
   } catch (error) {
     next(error);
   }
-};;
+};

@@ -1,25 +1,25 @@
-const Banner = require('../models/Banner');
+import Banner from '../models/Banner.js';
 
-exports.createBanner = async (data) => {
+export const createBanner = async (data) => {
   const banner = new Banner(data);
   return await banner.save();
 };
 
-exports.fetchAllBanners = async () => {
+export const fetchAllBanners = async () => {
   return await Banner.find().sort({ order: 1, createdAt: 1 });
 };
 
-exports.fetchActiveBanners = async () => {
+export const fetchActiveBanners = async () => {
   return await Banner.find({ isActive: true }).sort({ order: 1, createdAt: 1 });
 };
 
-exports.updateBanner = async (id, updateData) => {
+export const updateBanner = async (id, updateData) => {
   const banner = await Banner.findByIdAndUpdate(id, updateData, { new: true });
   if (!banner) throw new Error('Banner not found');
   return banner;
 };
 
-exports.deleteBanner = async (id) => {
+export const deleteBanner = async (id) => {
   const banner = await Banner.findByIdAndDelete(id);
   if (!banner) throw new Error('Banner not found');
   return { success: true };

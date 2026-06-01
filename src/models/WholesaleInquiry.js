@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+import mongoose from 'mongoose';
 
 const wholesaleInquirySchema = new mongoose.Schema({
   inquiryId: { type: String, required: true, unique: true }, // e.g. WHS-2026-0001
@@ -25,4 +25,4 @@ const wholesaleInquirySchema = new mongoose.Schema({
   }
 }, { timestamps: true });
 
-module.exports = mongoose.model('WholesaleInquiry', wholesaleInquirySchema);
+export default mongoose.model('WholesaleInquiry', wholesaleInquirySchema);

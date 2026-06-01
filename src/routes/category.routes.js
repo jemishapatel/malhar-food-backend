@@ -1,8 +1,8 @@
-const express = require('express');
+import express from 'express';
 const router = express.Router();
-const categoryController = require('../controllers/category.controller');
-const authMiddleware = require('../middlewares/auth.middleware');
-const uploadMiddleware = require('../middlewares/upload.middleware');
+import * as categoryController from '../controllers/category.controller.js';
+import authMiddleware from '../middlewares/auth.middleware.js';
+import * as uploadMiddleware from '../middlewares/upload.middleware.js';
 
 // Public category endpoints
 router.get('/', categoryController.getAllCategories);
@@ -12,4 +12,4 @@ router.post('/', authMiddleware, uploadMiddleware.uploadSingle('image'), categor
 router.put('/:id', authMiddleware, uploadMiddleware.uploadSingle('image'), categoryController.updateCategory);
 router.delete('/:id', authMiddleware, categoryController.deleteCategory);
 
-module.exports = router;
+export default router;
