@@ -3,7 +3,7 @@ import Product from '../models/Product.js';
 import User from '../models/User.js';
 
 export const createOrder = async (orderData) => {
-  const { customerName, mobile, address, city, postcode, items, userId, countryCode } = orderData;
+  const { customerName, mobile, address, city, postcode, items, userId, countryCode, paymentMethod } = orderData;
 
   if (!items || items.length === 0) {
     throw new Error('Order must contain at least one item');
@@ -58,6 +58,8 @@ export const createOrder = async (orderData) => {
     city,
     postcode,
     amount: calculatedAmount,
+    paymentMethod: paymentMethod || 'COD',
+    paymentStatus: paymentMethod === 'stripe' ? 'pending' : 'pending', // both start pending; stripe confirms via /api/payments/confirm
     items: verifiedItems
   });
 

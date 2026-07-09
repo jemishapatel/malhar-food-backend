@@ -1,4 +1,7 @@
 import dotenv from 'dotenv'
+// ⚠️ dotenv MUST be called before any other imports that read process.env
+dotenv.config();
+
 import express from 'express';
 import cors from 'cors';
 import path from 'path';
@@ -11,12 +14,11 @@ import categoryRoutes from './src/routes/category.routes.js';
 import orderRoutes from './src/routes/order.routes.js';
 import wholesaleRoutes from './src/routes/wholesale.routes.js';
 import bannerRoutes from './src/routes/banner.routes.js';
+import paymentRoutes from './src/routes/payment.routes.js';
 import swagger from './src/config/swagger.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
-dotenv.config();
 const app = express();
 
 const PORT = process.env.PORT || 5000;
@@ -64,6 +66,8 @@ app.use('/api/orders', orderRoutes);
 app.use('/api/wholesale', wholesaleRoutes);
 
 app.use('/api/banners', bannerRoutes);
+
+app.use('/api/payments', paymentRoutes);
 
 // ======================
 // Frontend Static Folder
