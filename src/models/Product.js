@@ -6,11 +6,16 @@ const variantSchema = new mongoose.Schema({
   inStock: { type: Boolean, default: true }
 });
 
+const nutritionRowSchema = new mongoose.Schema({
+  label: { type: String },
+  value: { type: String },
+}, { _id: false });
+
 const productSchema = new mongoose.Schema({
   name: { type: String, required: true },
   description: { type: String },
-  categorySlug: { type: String, required: true, index: true }, // references Category.slug
-  subCategory: { type: String }, // e.g. "Basmati"
+  categorySlug: { type: String, required: true, index: true },
+  subCategory: { type: String },
   isOrganic: { type: Boolean, default: false },
   isVegan: { type: Boolean, default: false },
   isGlutenFree: { type: Boolean, default: false },
@@ -19,9 +24,13 @@ const productSchema = new mongoose.Schema({
   storage: { type: String },
   packaging: { type: String },
   dietaryInfo: { type: String },
+  ingredients: [{ type: String }],
+  nutrition: {
+    rows: { type: [nutritionRowSchema], default: undefined }
+  },
   badge: { type: String, enum: ['none', 'New', 'Sale', 'Popular'], default: 'none' },
   inStock: { type: Boolean, default: true },
-  images: [{ type: String }], // Array of image URLs (first is primary)
+  images: [{ type: String }],
   variants: [variantSchema]
 }, { timestamps: true });
 

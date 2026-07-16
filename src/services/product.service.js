@@ -33,7 +33,40 @@ export const createProduct = async (productData) => {
   }
   productData.variants = variantsArray;
 
+  // Parse nutrition JSON string if sent as a string
+  if (typeof productData.nutrition === 'string' && productData.nutrition.trim()) {
+    try {
+      productData.nutrition = JSON.parse(productData.nutrition);
+    } catch (e) {
+      delete productData.nutrition;
+    }
+  }
+
+  // Parse ingredients JSON string if sent as a string
+  if (typeof productData.ingredients === 'string' && productData.ingredients.trim()) {
+    try {
+      const parsed = JSON.parse(productData.ingredients);
+      productData.ingredients = Array.isArray(parsed) ? parsed : [productData.ingredients];
+    } catch (e) {
+      productData.ingredients = productData.ingredients ? [productData.ingredients] : [];
+    }
+  }
+
+  // Ensure nutrition.rows is a plain array (not a string)
+  if (productData.nutrition && typeof productData.nutrition.rows === 'string') {
+    try {
+      productData.nutrition.rows = JSON.parse(productData.nutrition.rows);
+    } catch (e) {
+      productData.nutrition.rows = [];
+    }
+  }
+
   const product = new Product(productData);
+  // Ensure nutrition.rows is explicitly set, as Mongoose can strip nested subdocuments
+  if (productData.nutrition && Array.isArray(productData.nutrition.rows)) {
+    product.set('nutrition.rows', productData.nutrition.rows);
+  }
+  
   return await product.save();
 };
 
@@ -112,7 +145,40 @@ export const updateProduct = async (id, updateData) => {
     }
   }
 
-  const product = await Product.findByIdAndUpdate(id, updateData, { new: true });
+  // Parse nutrition JSON string if sent as a string
+  if (typeof updateData.nutrition === 'string' && updateData.nutrition.trim()) {
+    try {
+      updateData.nutrition = JSON.parse(updateData.nutrition);
+    } catch (e) {
+      delete updateData.nutrition;
+    }
+  }
+
+  // Parse ingredients JSON string if sent as a string
+  if (typeof updateData.ingredients === 'string' && updateData.ingredients.trim()) {
+    try {
+      const parsed = JSON.parse(updateData.ingredients);
+      updateData.ingredients = Array.isArray(parsed) ? parsed : [updateData.ingredients];
+    } catch (e) {
+      updateData.ingredients = updateData.ingredients ? [updateData.ingredients] : [];
+    }
+  }
+
+  // Build a flat $set object using dot-notation for nested fields
+  // This ensures nutrition.rows and ingredients are written correctly by MongoDB
+  const setPayload = { ...updateData };
+
+  // If nutrition has rows, set via dot-notation to avoid Mongoose stripping the sub-document
+  if (updateData.nutrition && Array.isArray(updateData.nutrition.rows)) {
+    setPayload['nutrition.rows'] = updateData.nutrition.rows;
+    delete setPayload.nutrition;
+  }
+
+  const product = await Product.findByIdAndUpdate(
+    id,
+    { $set: setPayload },
+    { new: true, runValidators: false }
+  );
   if (!product) {
     throw new Error('Product not found');
   }
