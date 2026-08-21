@@ -2,6 +2,7 @@ import Product from '../models/Product.js';
 import Category from '../models/Category.js';
 
 export const createProduct = async (productData) => {
+  console.log('Create Product Data:', productData);
   // Validate category if provided
   if (productData.categorySlug) {
     const category = await Category.findOne({ slug: productData.categorySlug });
@@ -106,10 +107,11 @@ export const fetchProductById = async (id) => {
   if (!product) {
     throw new Error('Product not found');
   }
-  return product;
+  console.log('Updated Product:', product); return product;
 };
 
 export const updateProduct = async (id, updateData) => {
+  console.log('Update Product Data:', updateData);
   if (updateData.categorySlug || updateData.subCategory) {
     const categorySlug = updateData.categorySlug || (await Product.findById(id)).categorySlug;
     const category = await Category.findOne({ slug: categorySlug });
@@ -174,7 +176,7 @@ export const updateProduct = async (id, updateData) => {
     delete setPayload.nutrition;
   }
 
-  const product = await Product.findByIdAndUpdate(
+  console.log('Set Payload:', setPayload); const product = await Product.findByIdAndUpdate(
     id,
     { $set: setPayload },
     { new: true, runValidators: false }

@@ -9,8 +9,8 @@ router.get('/', productController.getProducts);
 router.get('/:id', productController.getProductById);
 
 // Admin product endpoints (auth required)
-router.post('/', authMiddleware, uploadMiddleware.uploadMultiple('images'), productController.createProduct);
-router.put('/:id', authMiddleware, uploadMiddleware.uploadMultiple('images'), productController.updateProduct);
-router.delete('/:id', authMiddleware, productController.deleteProduct);
+router.post('/', uploadMiddleware.uploadMultiple('images'), productController.createProduct);
+router.put('/:id', uploadMiddleware.uploadMultiple('images'), productController.updateProduct);
+router.delete('/:id', productController.deleteProduct);
 
 export default router;

@@ -38,7 +38,7 @@ export const updateProduct = async (req, res, next) => {
       req.body.images = req.files.map(file => `/uploads/${file.filename}`);
     }
     const { id } = req.params;
-    const product = await productService.updateProduct(id, req.body);
+    console.log('Update Body:', req.body); const product = await productService.updateProduct(id, req.body);
     return ApiResponse.success(res, 200, "Product updated successfully", product);
   } catch (error) {
     next(error);

@@ -24,6 +24,9 @@ const productSchema = new mongoose.Schema({
   storage: { type: String },
   packaging: { type: String },
   dietaryInfo: { type: String },
+  netWeight: { type: String },
+  batchNo: { type: String },
+  bestBeforeEnd: { type: String },
   ingredients: [{ type: String }],
   nutrition: {
     rows: { type: [nutritionRowSchema], default: undefined }
