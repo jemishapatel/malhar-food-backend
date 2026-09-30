@@ -30,7 +30,7 @@ const PORT = process.env.PORT || 5000;
 app.use(
   cors({
     origin: "*",
-       credentials: true,
+    credentials: true,
     methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   })
 );
@@ -125,7 +125,7 @@ app.use((err, _req, res, _next) => {
 // ======================
 connectDB()
   .then(() => {
-    app.listen(PORT,"0.0.0.0", () => {
+    app.listen(PORT, "0.0.0.0", () => {
       console.log(
         `Server running on http://localhost:${PORT}`
       );

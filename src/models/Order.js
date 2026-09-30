@@ -10,17 +10,23 @@ const orderItemSchema = new mongoose.Schema({
 const orderSchema = new mongoose.Schema({
   orderId: { type: String, required: true, unique: true }, // e.g. ORD-UK-1001
   userId: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  customerName: { type: String, required: true },
-  mobile: { type: String, required: true, index: true },
+  customerName: { type: String },
+  mobile: { type: String, index: true },
   countryCode: { type: String, default: '+44' }, // country code for mobile number
-  address: { type: String, required: true },
+  email: { type: String, default: null },        // optional email from delivery address form
+  address: { type: String },
   city: { type: String, default: 'London' },
-  postcode: { type: String, required: true },
-  amount: { type: Number, required: true },
-  status: { 
-    type: String, 
-    enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled'], 
-    default: 'Processing' 
+  postcode: { type: String },
+  amount: { type: Number, default: 0 },
+  status: {
+    type: String,
+    enum: ['Draft', 'Processing', 'Shipped', 'Delivered', 'Cancelled'],
+    default: 'Draft'
+  },
+  deliveryOption: { type: String, enum: ['normal', 'quick'], default: 'normal' },
+  deliverySlot: { 
+    date: { type: String },
+    time: { type: String }
   },
   paymentMethod: { type: String, enum: ['COD', 'stripe'], default: 'COD' },
   paymentIntentId: { type: String, default: null }, // Stripe PaymentIntent ID

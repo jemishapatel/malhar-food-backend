@@ -70,10 +70,31 @@ export const getAddresses = async (req, res, next) => {
 
 export const createAddress = async (req, res, next) => {
   try {
+    console.log('\n=== CREATE ADDRESS REQUEST ===');
+    console.log('User ID:', req.user._id);
+    console.log('Request Body:', JSON.stringify(req.body, null, 2));
+    
     const userId = req.user._id;
+    
+    // Validate required fields
+    const { fullName, mobile, addressLine, city, postcode } = req.body;
+    if (!fullName || !mobile || !addressLine || !postcode) {
+      console.error('Missing required fields');
+      return res.status(400).json({
+        success: false,
+        statusCode: 400,
+        message: 'Missing required fields: fullName, mobile, addressLine, postcode'
+      });
+    }
+    
     const address = await authService.createUserAddress(userId, req.body);
+    console.log('✅ Address created successfully');
+    console.log('=== END CREATE ADDRESS ===\n');
+    
     return ApiResponse.success(res, 201, "Address created successfully", address);
   } catch (error) {
+    console.error('❌ Controller Error:', error.message);
+    console.log('=== END CREATE ADDRESS (ERROR) ===\n');
     next(error);
   }
 };

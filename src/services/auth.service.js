@@ -154,6 +154,8 @@ export const getUserByEmail = async (email) => {
   const user = await User.findOne({ email });
   return user;
 };
+
+
 export const getUserProfile = async (userId) => {
   const user = await User.findById(userId);
   if (!user) {
@@ -161,6 +163,7 @@ export const getUserProfile = async (userId) => {
   }
   return user;
 };
+
 
 export const updateUserProfile = async (userId, updateData) => {
   const user = await User.findByIdAndUpdate(userId, updateData, { new: true });

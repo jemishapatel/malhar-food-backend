@@ -62,6 +62,15 @@ export const createProduct = async (productData) => {
     }
   }
 
+  // Parse offer JSON string if sent as a string
+  if (typeof productData.offer === 'string' && productData.offer.trim()) {
+    try {
+      productData.offer = JSON.parse(productData.offer);
+    } catch (e) {
+      delete productData.offer;
+    }
+  }
+
   const product = new Product(productData);
   // Ensure nutrition.rows is explicitly set, as Mongoose can strip nested subdocuments
   if (productData.nutrition && Array.isArray(productData.nutrition.rows)) {
@@ -163,6 +172,15 @@ export const updateProduct = async (id, updateData) => {
       updateData.ingredients = Array.isArray(parsed) ? parsed : [updateData.ingredients];
     } catch (e) {
       updateData.ingredients = updateData.ingredients ? [updateData.ingredients] : [];
+    }
+  }
+
+  // Parse offer JSON string if sent as a string
+  if (typeof updateData.offer === 'string' && updateData.offer.trim()) {
+    try {
+      updateData.offer = JSON.parse(updateData.offer);
+    } catch (e) {
+      delete updateData.offer;
     }
   }
 

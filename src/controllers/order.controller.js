@@ -14,6 +14,33 @@ export const placeOrder = async (req, res, next) => {
   }
 };
 
+export const saveAddress = async (req, res, next) => {
+  try {
+    const orderData = {
+      ...req.body,
+      userId: req.user ? req.user._id : null
+    };
+    const order = await orderService.createDraftOrder(orderData);
+    return ApiResponse.success(res, 201, "Draft order address saved successfully", order);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const updateAddress = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const addressData = {
+      ...req.body,
+      userId: req.user ? req.user._id : null
+    };
+    const order = await orderService.updateDraftAddress(id, addressData);
+    return ApiResponse.success(res, 200, "Draft order address updated successfully", order);
+  } catch (error) {
+    next(error);
+  }
+};
+
 export const getMyOrders = async (req, res, next) => {
   try {
     const mobile = req.user ? req.user.mobile : req.query.mobile;
@@ -23,6 +50,42 @@ export const getMyOrders = async (req, res, next) => {
     const orders = await orderService.fetchMyOrders(mobile);
     return ApiResponse.success(res, 200, "Order history retrieved successfully", orders);
   } catch (error) {
+    next(error);
+  }
+};
+
+export const checkPostcode = async (req, res, next) => {
+  try {
+    const { postcode } = req.params;
+    const result = await orderService.validatePostcodeServiceability(postcode);
+    return ApiResponse.success(res, 200, "Postcode checked", result);
+  } catch (error) {
+    next(error);
+  }
+};
+
+export const addServiceablePostcode = async (req, res, next) => {
+  try {
+    console.log("========== SERVICEABLE POSTCODE API HIT ==========");
+    console.log("Method:", req.method);
+    console.log("URL:", req.originalUrl);
+    console.log("Body:", req.body);
+
+    const newArea = await orderService.addServiceablePostcode(req.body);
+
+    console.log("========== SERVICEABLE POSTCODE RESULT ==========");
+    console.log("Result:", newArea);
+
+    return ApiResponse.success(
+      res,
+      201,
+      "Serviceable postcode added successfully",
+      newArea
+    );
+  } catch (error) {
+    console.error("========== SERVICEABLE POSTCODE ERROR ==========");
+    console.error(error);
+
     next(error);
   }
 };

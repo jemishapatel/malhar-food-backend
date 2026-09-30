@@ -34,7 +34,20 @@ const productSchema = new mongoose.Schema({
   badge: { type: String, enum: ['none', 'New', 'Sale', 'Popular'], default: 'none' },
   inStock: { type: Boolean, default: true },
   images: [{ type: String }],
-  variants: [variantSchema]
+  variants: [variantSchema],
+  offer: {
+    type: {
+      type: String,
+      enum: ['none', 'discount', 'multibuy', 'quantity'],
+      default: 'none'
+    },
+    label: { type: String },
+    price: { type: Number },
+    quantity: { type: Number },
+    startDate: { type: Date },
+    endDate: { type: Date },
+    isActive: { type: Boolean, default: false }
+  }
 }, { timestamps: true });
 
 export default mongoose.model('Product', productSchema);

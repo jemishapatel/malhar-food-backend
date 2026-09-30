@@ -8,7 +8,7 @@ const addressSchema = new mongoose.Schema({
   city: { type: String, default: 'London' },
   postcode: { type: String, required: true },
   isDefault: { type: Boolean, default: false }
-});
+}, { timestamps: true });
 
 // User schema with additional fields: email, password, countryCode
 const userSchema = new mongoose.Schema({
