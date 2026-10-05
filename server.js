@@ -69,6 +69,8 @@ app.use('/api/banners', bannerRoutes);
 
 app.use('/api/payments', paymentRoutes);
 
+import fs from 'fs';
+
 // ======================
 // Frontend Static Folder
 // ======================
@@ -77,18 +79,24 @@ const frontendPath = path.join(
   'Malharfood'
 );
 
-// Serve frontend static files
-app.use(express.static(frontendPath));
+// Serve frontend static files if directory exists
+if (fs.existsSync(frontendPath)) {
+  app.use(express.static(frontendPath));
 
-// Home Route
-app.get('/', (_req, res) => {
-  res.sendFile(path.join(frontendPath, 'index.html'));
-});
+  // Home Route
+  app.get('/', (_req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+  });
 
-// SPA Catch-All Route
-app.get(/^\/(?!api).*/, (_req, res) => {
-  res.sendFile(path.join(frontendPath, 'index.html'));
-});
+  // SPA Catch-All Route
+  app.get(/^\/(?!api).*/, (_req, res) => {
+    res.sendFile(path.join(frontendPath, 'index.html'));
+  });
+} else {
+  app.get('/', (_req, res) => {
+    res.json({ message: 'Malhar Food Backend API is running' });
+  });
+}
 
 // ======================
 // 404 Handler

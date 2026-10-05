@@ -4,10 +4,10 @@ import * as orderController from '../controllers/order.controller.js';
 import authMiddleware from '../middlewares/auth.middleware.js';
 import optionalAuthMiddleware from '../middlewares/optionalAuth.middleware.js';
 
-// Public/Guest Order placement
+// Public/Guest & Authenticated Order placement
 router.get('/check-postcode/:postcode', orderController.checkPostcode);
 router.post('/serviceable-postcodes', orderController.addServiceablePostcode);
-router.post('/', authMiddleware, orderController.placeOrder);
+router.post('/', optionalAuthMiddleware, orderController.placeOrder);
 router.post('/address', optionalAuthMiddleware, orderController.saveAddress);
 router.put('/:id/address', optionalAuthMiddleware, orderController.updateAddress);
 

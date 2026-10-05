@@ -1,9 +1,12 @@
 import twilio from 'twilio';
 
 let twilioClient = null;
-if (process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
-  twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
-}
+const getTwilioClient = () => {
+  if (!twilioClient && process.env.TWILIO_ACCOUNT_SID && process.env.TWILIO_AUTH_TOKEN) {
+    twilioClient = twilio(process.env.TWILIO_ACCOUNT_SID, process.env.TWILIO_AUTH_TOKEN);
+  }
+  return twilioClient;
+};
 
 export const generateOtp = () => {
   return Math.floor(100000 + Math.random() * 900000).toString();
@@ -11,10 +14,11 @@ export const generateOtp = () => {
 
 export const sendSms = async (mobile, code) => {
   const message = `Your Malhar Food verification code is: ${code}. This code is valid for 5 minutes.`;
+  const client = getTwilioClient();
 
-  if (twilioClient && process.env.TWILIO_PHONE_NUMBER) {
+  if (client && process.env.TWILIO_PHONE_NUMBER) {
     try {
-      await twilioClient.messages.create({
+      await client.messages.create({
         body: message,
         from: process.env.TWILIO_PHONE_NUMBER,
         to: mobile
@@ -26,7 +30,7 @@ export const sendSms = async (mobile, code) => {
       return false;
     }
   } else {
-    console.log(`[Mock SMS] Environment missing Twilio Config. Pretending to send to ${mobile}:`);
+    console.log(`[Mock SMS] Environment missing Twilio Config. (SID=${Boolean(process.env.TWILIO_ACCOUNT_SID)}, TOKEN=${Boolean(process.env.TWILIO_AUTH_TOKEN)}, PHONE=${Boolean(process.env.TWILIO_PHONE_NUMBER)}). Pretending to send to ${mobile}:`);
     console.log(`MESSAGE: ${message}`);
     return true;
   }

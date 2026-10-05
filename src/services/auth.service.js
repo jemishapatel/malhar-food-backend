@@ -4,8 +4,10 @@ import * as otpUtil from '../utils/otp.util.js';
 import bcrypt from 'bcrypt';
 
 export const sendOtp = async (mobile, name, email, password, role, countryCode) => {
+  console.log('[Auth Service] sendOtp initiating for mobile:', mobile);
   // Generate a real 6-digit OTP
   const code = otpUtil.generateOtp();
+  console.log('[Auth Service] Generated OTP code:', code);
 
   // Save/Update OTP in DB (Upsert ensures we overwrite any existing valid code for this mobile)
   await Otp.findOneAndUpdate(
@@ -13,9 +15,11 @@ export const sendOtp = async (mobile, name, email, password, role, countryCode) 
     { code, createdAt: Date.now() },
     { upsert: true, new: true }
   );
+  console.log('[Auth Service] OTP record saved/updated in database for mobile:', mobile);
 
   // Send SMS via Utility
   await otpUtil.sendSms(mobile, code);
+  console.log('[Auth Service] SMS dispatch initiated for mobile:', mobile);
 
   // For testing convenience locally, we return the code. In true production, this should be removed.
   return { mobile, code };

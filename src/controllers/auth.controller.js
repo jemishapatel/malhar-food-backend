@@ -6,13 +6,16 @@ import bcrypt from 'bcrypt';
 export const sendOtp = async (req, res, next) => {
   try {
     const { mobile, name, email, password, role, countryCode } = req.body;
+    console.log('[Auth Controller] sendOtp request received:', { mobile, name, email, role, countryCode });
     if (!mobile) {
       return ApiResponse.error(res, 400, "Mobile number is required");
     }
 
     const result = await authService.sendOtp(mobile, name, email, password, role, countryCode);
+    console.log('[Auth Controller] sendOtp response result:', result);
     return ApiResponse.success(res, 200, `Verification code sent to ${mobile}`, result);
   } catch (error) {
+    console.error('[Auth Controller] sendOtp error:', error);
     next(error);
   }
 };
