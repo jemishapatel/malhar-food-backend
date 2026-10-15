@@ -12,7 +12,9 @@ const swaggerDefinition = {
   },
   servers: [
     {
-      url: 'http://13.134.230.136:3121',
+      // url: 'http://13.134.230.136:3121',
+       url: 'https://malhaarfood.uk/api',
+      //  url: 'http://localhost:5000',
       // url: 'http://13.235.191.250:3121',
       // url: 'http://localhost:5000',
       description: 'Production Server'
